@@ -80,12 +80,10 @@ public class DIscretelab2 {
     public static void main(String[] args) {
 
         while (true) {
-            System.out.println("Choose from 1 , 2 , 3 And 4");
+            System.out.println("Choose from 1 and 2");
 
             System.out.println("1.Fast Exponentiation" +
-                    "\n2.Extended Euclidean Algorithm" +
-                    "\n3.Chinese Remainder Theorem" +
-                    "\n4.Prime Number Generation");
+                    "\n2.Prime Number Generation");
 
             Scanner input = new Scanner(System.in);
             int s = input.nextInt();
@@ -104,10 +102,6 @@ public class DIscretelab2 {
                 System.out.println(FastExpRecursive(a, b, c) + " (Fast using Recursive)");
 
             } else if (s == 2) {
-
-            } else if (s == 3) {
-
-            } else if (s == 4) {
                 System.out.println("Enter a number");
                 int k = input.nextInt();
                 sieveOfEratosthenes(k);
