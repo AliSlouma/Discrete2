@@ -1,0 +1,70 @@
+import java.util.ArrayList;
+import java.util.Scanner;
+
+
+public class EEA {
+    public static void main(String[] args) {
+        System.out.println("مساء الورد");
+        int a, b, d;
+        int[] s_t = new int[2];
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("a = ");
+        a = scanner.nextInt();
+        System.out.print("b = ");
+        b = scanner.nextInt();
+        d = gcd(a, b);
+        System.out.printf("d = %d\n", d);
+        System.out.printf("d is the Greatest Common Divisor of a and b.\n");
+        s_t = linearComb(a, b);
+        System.out.printf("s = %d, t = %d\n", s_t[0], s_t[1]);
+        System.out.printf("s and t are two numbers in which for a given other two numbers a, b" +
+                "\n this relation applies: sa + tb = d, where d is the gcd for both a and b." +
+                "\n You can find yourself that %d = %d × %d + %d × %d.", d, s_t[0], a, s_t[1], b);
+    }
+     /*
+     * Gets the gcd of two numbers with the extended Euclidean theorem.
+     * Its override fills a list with a certain input to use later in getting the
+     * linear combination of this two numbers. */
+    public static int gcd(int a, int b){
+        if(b == 0) return a;
+        return gcd(b, a % b);
+    }
+    public static int gcd(int a, int b, ArrayList ts){
+        if(b == 0){
+            ts.remove(ts.size() - 1);
+            revers(ts, 0, ts.size() - 1);
+            return a;
+        }
+        ts.add(- a / b);
+        return gcd(b, a % b, ts);
+    }
+    /*
+    * Gets an s, t from an a, b so that sa + tb = d, where d = gcd(a, b). */
+    public static int[] linearComb(int a, int b){
+        ArrayList<Integer> numbers = new ArrayList();
+        int d = gcd(a, b, numbers);
+        int t = t(numbers);
+        int s = (d - t * b) / a;
+        int[] s_t = {s, t};
+        return s_t;
+    }
+    /*
+    * Gets t out of the list we got from gcd. */
+    public static int t(int n, ArrayList<Integer> ts){
+        if(n == 0) return 1;
+        if(n == 1) return ts.get(0);
+        return t(n - 1, ts) * ts.get(n - 1) + t(n - 2, ts);
+    }
+    public static int t(ArrayList<Integer> ts){
+        return t(ts.size(), ts);
+    }
+    /*
+    * Reverses an arrayList, used to revers the list we get in gcd. */
+    public static void revers(ArrayList arrayList, int from, int to){
+        Object temp = arrayList.get(from);
+        arrayList.set(from, arrayList.get(to));
+        arrayList.set(to, temp);
+        if(to - from <= 2) return;
+        revers(arrayList, from + 1, to - 1);
+    }
+}
