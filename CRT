@@ -1,0 +1,115 @@
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+public class CRT {
+    public static final long TEN_SIXTH_POWER = 1000000;
+    public static void main(String[] args) {
+        System.out.println("مساء التألق");
+        long a, b, c, d; int i;
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("A = ");
+        a = scanner.nextInt();
+        System.out.print("B = ");
+        b = scanner.nextInt();
+        System.out.print("m number = ");
+        i = scanner.nextInt();
+        int M[] = new int[i];
+        System.out.print("M = {");
+        for(; i > 0; i--){
+            M[i - 1] = scanner.nextInt();
+        }
+        System.out.println("}");
+        long startTime, endTime, regDuration, crtDuration;
+        // The addition
+        System.out.println("Addition:");
+        startTime = System.nanoTime();
+        c = a + b;
+        endTime = System.nanoTime();
+        regDuration = endTime - startTime;
+        System.out.printf("(Regular Addition) A + B = %d\n", c);
+        startTime = System.nanoTime();
+        c = crtAdd(a, b, M);
+        endTime = System.nanoTime();
+        crtDuration = endTime - startTime;
+        System.out.printf("(Addition using CRT) A + B = %d\n", c);
+        System.out.printf("Using the regular way, addition took %d milliseconds, and using CRT addition took %d.\n" +
+                "In this situation %s is better by %d" +
+                " milliseconds.\n", regDuration, crtDuration, (regDuration > crtDuration)? "CRT" : "Regular Way", Math.abs(regDuration - crtDuration));
+        // The multiplication
+        System.out.println("Multiplication:");
+        startTime = System.nanoTime();
+        d = a * b;
+        endTime = System.nanoTime();
+        regDuration = endTime - startTime;
+        System.out.printf("(Regular Addition) A × B = %d\n", d);
+        startTime = System.nanoTime();
+        d = crtMlt(a, b, M);
+        endTime = System.nanoTime();
+        crtDuration = endTime - startTime;
+        System.out.printf("(Addition using CRT) A × B = %d\n", d);
+        System.out.printf("Using the regular way, addition took %d milliseconds, and using CRT addition took %d.\n" +
+                "In this situation %s is better by %d" +
+                " milliseconds.", regDuration, crtDuration, (regDuration > crtDuration)? "CRT" : "Regular Way", Math.abs(regDuration - crtDuration));
+    }
+    /*
+    * This function uses CRT to add big numbers instead of the regular method.*/
+    public static long crtAdd(long a, long b, int[] m){
+        int[] crtA = toCRT(a, m);
+        int[] crtB = toCRT(b, m);
+        int[] result = new int[crtA.length];
+        for (int i = 0; i < m.length; i++) result[i] = ((crtA[i] + crtB[i]) % m[i]);
+        return toInt(result, m);
+    }
+    /*
+     * This function uses CRT to multiply big numbers instead of the regular method.*/
+    public static long crtMlt(long a, long b, int[] m){
+        int[] crtA = toCRT(a, m);
+        int[] crtB = toCRT(b, m);
+        int[] result = new int[crtA.length];
+        for (int i = 0; i < m.length; i++) result[i] = ((crtA[i] * crtB[i]) % m[i]);
+        return toInt(result, m);
+    }
+    /*
+    * Converts a regular number to its representation by CRT.*/
+    public static int[] toCRT (long number, int[] m){
+        int[] rep = new int[m.length];
+        for (int i = 0; i < m.length; i++) {
+            rep[i] = (int) (number % m[i]);
+        }
+        return rep;
+    }
+    /*
+     * Converts a CRT representation of a number to the regular number.*/
+    public static long toInt (int[] crt, int[] m){
+        if(m.length != crt.length) throw new ArithmeticException();
+        long number = 0;
+        long M = 1;
+        for (int i = 0; i < m.length; i++) {
+            M *= m[i];
+        }
+        for (int i = 0; i < crt.length; i++) {
+            long M_i = (M / m[i]);
+            number += crt[i] * M_i * inverse(M_i, m[i]);
+        }
+        return number % M;
+    }
+    /*
+    * The inverse of a number in a certain domain.*/
+    public static long inverse (long number, int m){
+        long inverse = 0;
+        number %= m;
+        for (int i = 0; i < m; i++){
+            if((number * i) % m == 1){
+                inverse = i;
+                break;
+            }
+        }
+        return inverse;
+    }
+    /*
+    * Converts nanoseconds to milliseconds.*/
+    public static long toMilli(long duration){
+        return duration / TEN_SIXTH_POWER;
+    }
+}
